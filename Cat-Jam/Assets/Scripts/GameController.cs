@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -18,8 +19,10 @@ public class GameController : MonoBehaviour
     private bool isPaused = false;
     public KeyCode pauseKey1 = KeyCode.Escape;
     public KeyCode pauseKey2 = KeyCode.P;
-    public GameObject panelPause; 
+    public GameObject panelPause;
 
+    [Header("Possible Levels")]
+    public List<string> gameScenes = new List<string>();
 
 
     void Start()
@@ -80,17 +83,22 @@ public class GameController : MonoBehaviour
     public void menuBtn()
     {
         Debug.Log("menu btn");
-        //go to menu
+        SceneManager.LoadScene("Menu");
     }
 
     public void playBtn()
     {
-        Debug.Log("play btn");
-        //reload scene
+        Debug.Log("play again btn");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().ToString());
+ 
     }
     public void playNextBtn()
     {
         Debug.Log("play next btn");
-        //play meow sound u otro lvl
+        int gameScenesIndex = gameScenes.IndexOf(SceneManager.GetActiveScene().ToString());
+        gameScenesIndex++;
+        if (gameScenesIndex > gameScenes.Count - 1)
+            gameScenesIndex = 0;
+        SceneManager.LoadScene(gameScenes[gameScenesIndex]);
     }
 }

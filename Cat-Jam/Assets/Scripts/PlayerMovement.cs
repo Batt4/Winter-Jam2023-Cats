@@ -5,9 +5,19 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
 
-    public float moveSpeed;
 
+    [Header("Player Life")]
+    public float playerHP;
+    public float startingHp = 3;
+
+    [Header("Movement")]
+    public float moveSpeed;
     public float groundDrag;
+    public Transform orientation;
+    float horizontalInput;
+    float verticalInput;
+    Vector3 moveDir;
+    Rigidbody rb;
 
     [Header("Jump")]
     public float basejumpForce;
@@ -25,11 +35,7 @@ public class PlayerMovement : MonoBehaviour
     bool grounded;
 
 
-    public Transform orientation;
-    float horizontalInput;
-    float verticalInput;
-    Vector3 moveDir;
-    Rigidbody rb;
+
 
     void Start()
     {
@@ -39,6 +45,7 @@ public class PlayerMovement : MonoBehaviour
         readyToJump = true;
         grounded = true;
         jumpForce = basejumpForce;
+        playerHP = startingHp;
 
     }
 
