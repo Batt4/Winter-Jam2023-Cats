@@ -4,23 +4,25 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("Movement")]
+
     public float moveSpeed;
 
     public float groundDrag;
 
-    public float jumpForce;
+    [Header("Jump")]
+    public float basejumpForce;
+    public float jumpForceIncrement;
+    public float maxJumpForce;
+    float jumpForce;
     public float jumpCooldown;
     public float airMultiplier;
-    bool readyToJump = true;
-
-    [Header("Keybind Jump")]
+    bool readyToJump;
     public KeyCode jumpKey = KeyCode.Space;
 
     [Header("Ground Check")]
     public float playerHeight;
     public LayerMask whatIsGround;
-    bool grounded = true;
+    bool grounded;
 
 
     public Transform orientation;
@@ -34,11 +36,16 @@ public class PlayerMovement : MonoBehaviour
 
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
+        readyToJump = true;
+        grounded = true;
+        jumpForce = basejumpForce;
+
     }
 
     void Update()
     {
-        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, whatIsGround);
+        grounded = Physics.Raycast(transform.position+ new Vector3(0,playerHeight * 0.5f,0), Vector3.down, playerHeight * 0.5f + 0.3f, whatIsGround);
+        //Debug.DrawRay(transform.position, Vector3.down, Color.red);
 
         myInput();
         speedControl();
@@ -59,7 +66,14 @@ public class PlayerMovement : MonoBehaviour
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
 
-        if (Input.GetKey(jumpKey) && readyToJump && grounded)
+        if (Input.GetKey(jumpKey) && readyToJump && grounded && jumpForce <= maxJumpForce)// && rb.velocity.magnitude == 0)
+        {
+            jumpForce += jumpForceIncrement * Time.deltaTime;
+            Debug.Log("super jump: "+ jumpForce);
+        }
+            
+
+        if (Input.GetKeyUp(jumpKey) && readyToJump && grounded)
         {
             Debug.Log("Jump");
             readyToJump = false;
@@ -96,9 +110,12 @@ public class PlayerMovement : MonoBehaviour
 
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
 
+        jumpForce = basejumpForce;
+
     }
     private void resetJump()
     {
         readyToJump = true;
     }
+
 }
