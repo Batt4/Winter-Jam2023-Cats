@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour
     public float jumpForce;
     public float jumpCooldown;
     public float airMultiplier;
-    bool readyToJump;
+    bool readyToJump = true;
 
     [Header("Keybind Jump")]
     public KeyCode jumpKey = KeyCode.Space;
@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Ground Check")]
     public float playerHeight;
     public LayerMask whatIsGround;
-    bool grounded;
+    bool grounded = true;
 
 
     public Transform orientation;
@@ -61,10 +61,12 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetKey(jumpKey) && readyToJump && grounded)
         {
+            Debug.Log("Jump");
             readyToJump = false;
             jump();
             Invoke(nameof(resetJump), jumpCooldown);
         }
+
     }
 
     private void movePlayer()
@@ -73,7 +75,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (grounded)
             rb.AddForce(moveDir.normalized * moveSpeed * 10f, ForceMode.Force);
-        else
+        else if (!grounded)
             rb.AddForce(moveDir.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
     }
 
