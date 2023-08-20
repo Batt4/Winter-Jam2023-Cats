@@ -125,4 +125,12 @@ public class PlayerMovement : MonoBehaviour
         readyToJump = true;
     }
 
+    private void OnTriggerStay(Collider other)
+    {
+        if ((other.gameObject.CompareTag("Coin") || Input.GetMouseButtonDown(0))){
+            Destroy(other.gameObject);
+            // spawn coin on top of the cat
+        }
+    }
+
 }

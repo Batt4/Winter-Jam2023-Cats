@@ -24,11 +24,37 @@ public class GameController : MonoBehaviour
     [Header("Possible Levels")]
     public List<string> gameScenes = new List<string>();
 
+    [Header("Coins")]
+    public GameObject coinPrefab;
+    public int numberOfSpawns = 5;
+    public List<Transform> coinsSpawns = new List<Transform>();
+    List<GameObject> coins = new List<GameObject>();
+
 
     void Start()
     {
         timer = startingTimer;
         gameover = false;
+        if (numberOfSpawns > coinsSpawns.Count)
+            numberOfSpawns = coinsSpawns.Count;
+
+        List<int> selectedIndexes = new List<int>();
+        while (selectedIndexes.Count < numberOfSpawns)
+        {
+            int randomIndex = Random.Range(0, coinsSpawns.Count-1);
+            Debug.Log(randomIndex);
+            if (!selectedIndexes.Contains(randomIndex))
+            {
+                selectedIndexes.Add(randomIndex);
+            }
+        }
+
+        foreach (int index in selectedIndexes)
+        {
+            GameObject inst = Instantiate(coinPrefab, coinsSpawns[selectedIndexes[index]].position, Quaternion.identity);
+            coins.Add(inst);
+        }
+
     }
 
 
