@@ -135,8 +135,9 @@ public class GameController : MonoBehaviour
     public void playBtn()
     {
         playClick();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().ToString());
- 
+        SceneManager.LoadScene("Game");
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().ToString());
+
     }
     public void playNextBtn()
     {
