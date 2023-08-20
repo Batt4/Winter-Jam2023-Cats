@@ -9,7 +9,7 @@ public class stack : MonoBehaviour
     [SerializeField]
     GameObject moneda;
 
-    public float StackSpacing = 0.2f;
+    public float StackSpacing = 0.09f;
 
     [SerializeField]
     int Coins;
@@ -38,8 +38,9 @@ public class stack : MonoBehaviour
             while(deltaCoins > 0) 
             {
                 loopcount++;
-                stackMonedas.Add(Instantiate(moneda, 
-                    new Vector3(transform.position.x, transform.position.y + ((coinsLastFrame + loopcount) * StackSpacing), transform.position.z), Quaternion.Euler(transform.rotation.x, Random.Range(-359, 359), transform.rotation.z), transform.parent) as GameObject);
+                stackMonedas.Add(Instantiate(moneda,
+                    new Vector3(transform.position.x, transform.position.y + ((coinsLastFrame + loopcount) * StackSpacing), transform.position.z), Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z), gameObject.transform) as GameObject);
+                stackMonedas[stackMonedas.Count - 1].transform.Rotate(0,Random.Range(-359,359),0);
                 deltaCoins = deltaCoins - 1;
             }
             
