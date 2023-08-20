@@ -34,12 +34,12 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask whatIsGround;
     bool grounded;
 
+    public Animator animator;
 
 
 
     void Start()
     {
-
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         readyToJump = true;
@@ -127,9 +127,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if ((other.gameObject.CompareTag("Coin") || Input.GetMouseButtonDown(0))){
+        if (other.gameObject.CompareTag("Coin")){
             Destroy(other.gameObject);
             // spawn coin on top of the cat
+            int i = animator.GetInteger("coins");
+            Debug.Log("coins collected: " + i);
+            i++;
+            animator.SetInteger("coins", i);
+
         }
     }
 

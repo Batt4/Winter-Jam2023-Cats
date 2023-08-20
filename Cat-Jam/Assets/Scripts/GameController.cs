@@ -48,9 +48,11 @@ public class GameController : MonoBehaviour
                 selectedIndexes.Add(randomIndex);
             }
         }
-
-        foreach (int index in selectedIndexes)
+        Debug.Log("count: " + selectedIndexes.Count);
+        for (int index = 0; index <= selectedIndexes.Count-1; index++)
+        //foreach (int index in selectedIndexes)
         {
+            Debug.Log("index: " + index);
             GameObject inst = Instantiate(coinPrefab, coinsSpawns[selectedIndexes[index]].position, Quaternion.identity);
             coins.Add(inst);
         }
