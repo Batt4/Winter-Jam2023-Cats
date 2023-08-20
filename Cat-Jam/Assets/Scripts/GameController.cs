@@ -11,6 +11,7 @@ public class GameController : MonoBehaviour
     float timer;
     public float startingTimer = 60;
     bool gameover;
+    public bool win = false;
 
     public GameObject panelWin;
     public GameObject panelLose;
@@ -63,6 +64,14 @@ public class GameController : MonoBehaviour
 
     void Update()
     {
+        if (win)
+        {
+            Time.timeScale = 0f;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            panelWin.SetActive(true);
+        }
+
         if (Input.GetKeyDown(pauseKey1) || Input.GetKeyDown(pauseKey2))
         {
             TogglePause();
@@ -113,30 +122,36 @@ public class GameController : MonoBehaviour
     }
     public void continueBtn()
     {
-        Debug.Log("play btn");
+        playClick();
         TogglePause();
     }
 
     public void menuBtn()
     {
-        Debug.Log("menu btn");
+        playClick();
         SceneManager.LoadScene("Menu");
     }
 
     public void playBtn()
     {
-        Debug.Log("play again btn");
+        playClick();
         SceneManager.LoadScene(SceneManager.GetActiveScene().ToString());
  
     }
     public void playNextBtn()
     {
-        Debug.Log("play next btn");/*
+        playClick();
+        /*
         int gameScenesIndex = gameScenes.IndexOf(SceneManager.GetActiveScene().ToString());
         gameScenesIndex++;
         if (gameScenesIndex > gameScenes.Count - 1)
             gameScenesIndex = 0;
         SceneManager.LoadScene(gameScenes[gameScenesIndex]);*/
         SceneManager.LoadScene("Game");
+    }
+    private void playClick()
+    {
+        AudioManager inst = AudioManager.instance;
+        inst.playFxSound();
     }
 }

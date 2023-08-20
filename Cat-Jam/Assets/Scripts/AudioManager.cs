@@ -11,7 +11,7 @@ public class AudioManager : MonoBehaviour
     private List<AudioSource> fxList = new List<AudioSource>();
 
     [Header("Music")]
-    [SerializeField] private AudioClip music;
+    [SerializeField] private AudioClip musicaMenu, musicaGame;
 
 
     [Header("SFX")]
@@ -30,7 +30,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void playFxSound(AudioClip clip)
+    public void playFxSound()
     {
         GameObject fxp = Instantiate(fxPrefab);
         fxp.transform.parent = gameObject.transform;
@@ -39,7 +39,7 @@ public class AudioManager : MonoBehaviour
 
         if (audioSource != null)
         {
-            audioSource.PlayOneShot(clip);
+            audioSource.PlayOneShot(meow);
             StartCoroutine(RemoveAudioSource(audioSource));
         }
     }

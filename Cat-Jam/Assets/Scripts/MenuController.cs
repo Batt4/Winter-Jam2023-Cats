@@ -39,6 +39,7 @@ public class MenuController : MonoBehaviour
     public void play()
     {
         Debug.Log("play next btn");
+        playClick();
         int gameScenesIndex = gameScenes.IndexOf(SceneManager.GetActiveScene().ToString());
         gameScenesIndex++;
         if (gameScenesIndex > gameScenes.Count - 1)
@@ -47,10 +48,12 @@ public class MenuController : MonoBehaviour
     }
     public void controls()
     {
+        playClick();
         controlPanel.SetActive(true);
     }
     public void menu()
     {
+        playClick();
         controlPanel.SetActive(false);
     }
 
@@ -59,12 +62,21 @@ public class MenuController : MonoBehaviour
         AudioManager inst = AudioManager.instance;
         inst.ToggleFx();
         imageFxToggle.sprite = inst.FxIsOn() ? activeFxColor : inactiveFxColor;
+        if (inst.FxIsOn())
+            playClick();
     }
     public void ToggleMusic()
     {
         AudioManager inst = AudioManager.instance;
         inst.ToggleMusic();
         imageMusicToggle.sprite = inst.MusicIsOn() ? activeMusicColor : inactiveMusicColor;
+        if (inst.FxIsOn())
+            playClick();
     }
 
+    private void playClick()
+    {
+        AudioManager inst = AudioManager.instance;
+        inst.playFxSound();
+    }
 }

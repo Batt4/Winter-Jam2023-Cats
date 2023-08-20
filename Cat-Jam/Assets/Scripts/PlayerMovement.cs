@@ -36,15 +36,19 @@ public class PlayerMovement : MonoBehaviour
     public float playerHeight;
     public LayerMask whatIsGround;
     bool grounded;
+    bool wasGrounded = true;
 
     public Animator animator;
     public float speedAnim = 1.5f;
 
     Vector3 initialScale;
+    Vector3 currentScale;
     [Header("CAMBIAR SOLO Y, X=1, Z=1")]
     public Vector3 targetScale;
     bool isInAir = false;
     float elapsedTimeJump = 0;
+    public float jumpRecoveryTime = 2f;
+    float timeToTop = 1;
 
     public KeyCode meowKey = KeyCode.F;
 
@@ -52,6 +56,9 @@ public class PlayerMovement : MonoBehaviour
     public TextMeshProUGUI scoreTxt;
     public TextMeshProUGUI maxScoreTxt;
     public int maxScore = 5;
+    GameController gameController;
+    public float chanceToWobble = 0.15f;
+    Coroutine wobble;
 
 
     void Start()
@@ -68,6 +75,8 @@ public class PlayerMovement : MonoBehaviour
         playerHP = startingHp;
         animator.SetFloat("speedAnim", speedAnim);
         initialScale = transform.localScale;
+        gameController = GameObject.Find("GameManager").GetComponent<GameController>();
+        rb.drag = groundDrag;
     }
 
     void Update()
@@ -78,10 +87,25 @@ public class PlayerMovement : MonoBehaviour
         myInput();
         speedControl();
 
+        if (!wasGrounded && grounded)
+        {
+            StartCoroutine(OscillateScale());
+            wasGrounded = true;
+        }
+        else if (!grounded && wasGrounded)
+        {
+            wasGrounded = false;
+        }
+
+        if ((Random.Range(0,100) < chanceToWobble) && wobble != null)
+            wobble = StartCoroutine(OscillateScale());
+
+        
         if (grounded)
             rb.drag = groundDrag;
         else
             rb.drag = 0;
+        
 
         if (Input.GetKeyUp(meowKey))
             meow();
@@ -103,6 +127,7 @@ public class PlayerMovement : MonoBehaviour
             elapsedTimeJump += Time.deltaTime;
             float alpha = Mathf.Clamp01(elapsedTimeJump / maxJumpTime);
             transform.localScale = Vector3.Lerp(initialScale, targetScale, alpha);
+            currentScale = transform.localScale;
         }
 
 
@@ -110,55 +135,41 @@ public class PlayerMovement : MonoBehaviour
         {
             elapsedTimeJump = 0;
             readyToJump = false;
-            StartCoroutine(UpJumpAnim());
+            
             jump();
+            StartCoroutine(UpJumpAnim());
             Invoke(nameof(resetJump), jumpCooldown);
-            isInAir = true;
         }
 
     }
 
     IEnumerator UpJumpAnim()
     {
-        float timeToTop = CalculateTimeToTop(jumpForce);
-        Debug.Log("timeToTop " + timeToTop);
-        Vector3 init = transform.localScale;
-        float elapsedTime = 0f;
-        while (elapsedTime < timeToTop)
+        timeToTop = CalculateTimeToTop(jumpForce)/2;
+        float startTime = Time.time;
+        while (Time.time - startTime < timeToTop)
         {
-            elapsedTime += Time.deltaTime;
-            float lerpAmount = Mathf.Clamp01(elapsedTime / timeToTop);
-            transform.localScale = Vector3.Lerp(init, targetScale, lerpAmount);
+            float t = (Time.time - startTime) / timeToTop;
+            transform.localScale = Vector3.Lerp(currentScale, initialScale, Mathf.SmoothStep(0.0f, 1.0f, t));
+            yield return null;
         }
-        //StartCoroutine(ResetAnim());
-        yield return null;
-        
+        transform.localScale = initialScale;
     }
-    IEnumerator ResetAnim()
-    {
-        float timeToTop = 1.75f;
-        float elapsedTime = 0f;
-        Vector3 init = transform.localScale;
-        while (!grounded)
-        {
 
-        }
-        while (elapsedTime < timeToTop/2)
+    private IEnumerator OscillateScale()
+    {
+        float startTime = Time.time;
+        while (Time.time - startTime < jumpRecoveryTime)
         {
-            elapsedTime += Time.deltaTime;
-            float lerpAmount = Mathf.Clamp01(elapsedTime / timeToTop);
-            transform.localScale = Vector3.Lerp(init, targetScale, lerpAmount);
-        }
-        init = transform.localScale;
-        while (elapsedTime < timeToTop)
-        {
-            elapsedTime += Time.deltaTime;
-            float lerpAmount = Mathf.Clamp01(elapsedTime / timeToTop);
-            transform.localScale = Vector3.Lerp(init, initialScale, lerpAmount);
+            float t = (Time.time - startTime) / jumpRecoveryTime;
+            if ((Time.time - startTime) < jumpRecoveryTime / 2)
+                transform.localScale = Vector3.Lerp(initialScale, targetScale, Mathf.SmoothStep(0.0f, 1.0f, t));
+            else
+                transform.localScale = Vector3.Lerp(targetScale, initialScale, Mathf.SmoothStep(0.0f, 1.0f, t));
             
+            yield return null;
         }
-        isInAir = false;
-        yield return null;
+        transform.localScale = initialScale;
     }
 
     private float CalculateTimeToTop(float jumpForce)
@@ -171,7 +182,7 @@ public class PlayerMovement : MonoBehaviour
     public void meow()
     {
         AudioManager inst = AudioManager.instance;
-        inst.playFxSound(inst.meow);
+        inst.playFxSound();
     }
 
     private void movePlayer()
@@ -220,13 +231,15 @@ public class PlayerMovement : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Coin")){
             Destroy(other.gameObject);
-            // spawn coin on top of the cat
+            AudioManager.instance.playFxSound();
             int i = animator.GetInteger("coins");
-            Debug.Log("coins collected: " + i);
             i++;
+            scoreTxt.text = i.ToString();
             animator.SetInteger("coins", i);
-
+            if (i > gameController.numberOfSpawns)
+                gameController.win = true;
         }
+
     }
 
 }
