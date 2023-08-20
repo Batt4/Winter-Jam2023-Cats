@@ -7,11 +7,13 @@ public class AudioManager : MonoBehaviour
     public static AudioManager instance;
     public GameObject fxPrefab;
 
+    bool muteFx = false;
+
     [SerializeField] private AudioSource musicSource;
     private List<AudioSource> fxList = new List<AudioSource>();
 
     [Header("Music")]
-    [SerializeField] private AudioClip musicaMenu, musicaGame;
+    [SerializeField] public AudioClip musicaMenu, musicaGame;
 
 
     [Header("SFX")]
@@ -28,6 +30,12 @@ public class AudioManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public void changeMusic(AudioClip audio)
+    {
+        musicSource.loop = true;
+        musicSource.PlayOneShot(audio);
     }
 
     public void playFxSound()
@@ -58,8 +66,10 @@ public class AudioManager : MonoBehaviour
 
     public void ToggleFx()
     {
-        foreach (AudioSource audioSource in fxList)
-            audioSource.mute = !audioSource.mute;
+        muteFx = !muteFx;
+        if (fxList.Count > 0)
+            foreach (AudioSource audioSource in fxList)
+                audioSource.mute = muteFx;
     }
 
     public void ToggleMusic()

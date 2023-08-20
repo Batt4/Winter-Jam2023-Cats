@@ -36,6 +36,8 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
+        AudioManager.instance.changeMusic(AudioManager.instance.musicaGame);
+        Time.timeScale = 1f;
         timer = startingTimer;
         sliderTimer.maxValue = startingTimer;
         updateTimer(startingTimer);
@@ -66,6 +68,7 @@ public class GameController : MonoBehaviour
     {
         if (win)
         {
+            AudioManager.instance.changeMusic(AudioManager.instance.musicaMenu);
             Time.timeScale = 0f;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
@@ -82,6 +85,7 @@ public class GameController : MonoBehaviour
 
         if (timer <= 0)
         {
+            AudioManager.instance.changeMusic(AudioManager.instance.musicaMenu);
             gameover = true;
             Time.timeScale = 0f;
             Cursor.lockState = CursorLockMode.None;
@@ -135,6 +139,7 @@ public class GameController : MonoBehaviour
     public void playBtn()
     {
         playClick();
+        Time.timeScale = 1f;
         SceneManager.LoadScene("Game");
         //SceneManager.LoadScene(SceneManager.GetActiveScene().ToString());
 
@@ -142,6 +147,7 @@ public class GameController : MonoBehaviour
     public void playNextBtn()
     {
         playClick();
+        Time.timeScale = 1f;
         /*
         int gameScenesIndex = gameScenes.IndexOf(SceneManager.GetActiveScene().ToString());
         gameScenesIndex++;
