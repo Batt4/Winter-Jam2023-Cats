@@ -35,6 +35,7 @@ public class AudioManager : MonoBehaviour
     public void changeMusic(AudioClip audio)
     {
         musicSource.loop = true;
+        musicSource.Stop();
         musicSource.PlayOneShot(audio);
     }
 
@@ -48,7 +49,7 @@ public class AudioManager : MonoBehaviour
         if (audioSource != null)
         {
             audioSource.PlayOneShot(meow);
-            //StartCoroutine(RemoveAudioSource(audioSource));
+            StartCoroutine(RemoveAudioSource(audioSource));
         }
     }
 
@@ -92,7 +93,7 @@ public class AudioManager : MonoBehaviour
 
     IEnumerator RemoveAudioSource(AudioSource audioSource)
     {
-        yield return new WaitForSeconds(audioSource.clip.length);
+        yield return new WaitForSeconds(1);
         fxList.Remove(audioSource);
         Destroy(audioSource.gameObject);
     }
