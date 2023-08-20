@@ -35,6 +35,7 @@ public class PlayerMovement : MonoBehaviour
     bool grounded;
 
     public Animator animator;
+    public float speedAnim = 1.5f;
 
 
 
@@ -46,7 +47,7 @@ public class PlayerMovement : MonoBehaviour
         grounded = true;
         jumpForce = basejumpForce;
         playerHP = startingHp;
-
+        animator.SetFloat("speedAnim", speedAnim);
     }
 
     void Update()
@@ -93,11 +94,16 @@ public class PlayerMovement : MonoBehaviour
     private void movePlayer()
     {
         moveDir = orientation.forward * verticalInput + orientation.right * horizontalInput;
-
+        float inputMagnitude = Mathf.Clamp01(moveDir.magnitude);
         if (grounded)
             rb.AddForce(moveDir.normalized * moveSpeed * 10f, ForceMode.Force);
         else if (!grounded)
+        {
             rb.AddForce(moveDir.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
+            //inputMagnitude *= speedUpAnimOnAir;
+        }
+
+        animator.SetFloat("input", inputMagnitude, 0.05f, Time.deltaTime);
     }
 
     private void speedControl()
@@ -118,6 +124,8 @@ public class PlayerMovement : MonoBehaviour
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
 
         jumpForce = basejumpForce;
+
+        //animator.SetFloat("speedAnim", 4, 0.05f, Time.deltaTime);
 
     }
     private void resetJump()
