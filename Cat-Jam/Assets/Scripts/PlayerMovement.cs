@@ -91,6 +91,7 @@ public class PlayerMovement : MonoBehaviour
         {
             StartCoroutine(OscillateScale());
             wasGrounded = true;
+            meow();
         }
         else if (!grounded && wasGrounded)
         {
@@ -170,6 +171,7 @@ public class PlayerMovement : MonoBehaviour
             yield return null;
         }
         transform.localScale = initialScale;
+        wobble = null;
     }
 
     private float CalculateTimeToTop(float jumpForce)

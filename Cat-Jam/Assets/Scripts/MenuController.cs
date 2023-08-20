@@ -40,11 +40,13 @@ public class MenuController : MonoBehaviour
     {
         Debug.Log("play next btn");
         playClick();
+        SceneManager.LoadScene("Game");
+            /*
         int gameScenesIndex = gameScenes.IndexOf(SceneManager.GetActiveScene().ToString());
         gameScenesIndex++;
         if (gameScenesIndex > gameScenes.Count - 1)
             gameScenesIndex = 0;
-        SceneManager.LoadScene(gameScenes[gameScenesIndex]);
+        SceneManager.LoadScene(gameScenes[gameScenesIndex]);*/
     }
     public void controls()
     {
