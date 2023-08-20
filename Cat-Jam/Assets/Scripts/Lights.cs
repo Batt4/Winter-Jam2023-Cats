@@ -28,34 +28,44 @@ public class Lights : MonoBehaviour
 
     void Update()
     {
-        var ray = Physics.BoxCast(_light.transform.position, boxSize / 2f, -_light.transform.forward, out RaycastHit hit, Quaternion.identity, Mathf.Infinity, _light.cullingMask);
+        RaycastHit hit;
+        var ray = Physics.BoxCast(_light.transform.position, boxSize / 2f, -_light.transform.forward, out hit, Quaternion.identity, Mathf.Infinity, _light.cullingMask);
         DebugDrawBox();
-        if (hit.collider.CompareTag("Player"))
+        //Debug.Log(hit.collider.gameObject.name);
+        if (hit.collider != null)
         {
-            Vector3 lightPos = transform.position;
-            Vector3 result = ClosestPointFinder.FindClosestPoint(lightPos, boxSize, player);
-            Vector3 difference_vector = player - lightPos;
-            Vector3 direction_vector = difference_vector / difference_vector.magnitude;
-
-            if (Physics.Raycast(result, direction_vector, difference_vector.magnitude + 5f))
+            Debug.Log(hit.collider.gameObject.name);
+            if (hit.collider.CompareTag("Player"))
             {
-                isRayHittingTarget = true;
-                if (coroutine != null)
+                Vector3 lightPos = transform.position;
+                Vector3 result = ClosestPointFinder.FindClosestPoint(lightPos, boxSize, player);
+                Vector3 difference_vector = player - lightPos;
+                Vector3 direction_vector = difference_vector / difference_vector.magnitude;
+                Debug.DrawRay(result, direction_vector, Color.yellow, difference_vector.magnitude + 5f);
+                if (Physics.Raycast(result, direction_vector, difference_vector.magnitude + 5f))
                 {
-                    StopCoroutine(coroutine);
-                    coroutine = null;
+                    isRayHittingTarget = true;
+                    if (coroutine != null)
+                    {
+                        StopCoroutine(coroutine);
+                        coroutine = null;
+                    }
+                    playerHP -= damage * Time.deltaTime;
                 }
-                playerHP -= damage * Time.deltaTime;
-            }
-            else
-            {
-                if (isRayHittingTarget)
+                else
                 {
-                    coroutine = StartCoroutine(TriggerCoroutine());
-                    isRayHittingTarget = false;
+                    if (isRayHittingTarget)
+                    {
+                        coroutine = StartCoroutine(TriggerCoroutine());
+                        isRayHittingTarget = false;
+                    }
                 }
-            }
 
+            }
+        }
+        else
+        {
+            Debug.Log("No Hit");
         }
         
     }

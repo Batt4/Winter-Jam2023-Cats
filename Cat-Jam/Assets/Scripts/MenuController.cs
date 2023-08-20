@@ -10,18 +10,16 @@ public class MenuController : MonoBehaviour
     public List<string> gameScenes = new List<string>();
 
     [Header("Toggle Music")]
-    public Toggle musicToggle;
     public Image imageMusicToggle;
     public Sprite activeMusicColor;
     public Sprite inactiveMusicColor;
-    [SerializeField] private bool toggleMusic;
+    public bool toggleMusic = true;
 
     [Header("Toggle FX")]
-    public Toggle fxToggle;
     public Image imageFxToggle;
     public Sprite activeFxColor;
     public Sprite inactiveFxColor;
-    [SerializeField] private bool toggleFx;
+    public bool toggleFx = true;
 
     [Header("Slider")]
     public Slider musicSlider;
@@ -56,21 +54,17 @@ public class MenuController : MonoBehaviour
         controlPanel.SetActive(false);
     }
 
-    public void Toggle()
+    public void ToggleFX()
     {
-        var inst = AudioManager.instance;
-
-        if (toggleFx)
-        {
-            inst.ToggleFx();
-            imageFxToggle.sprite = inst.FxIsOn() ? activeFxColor : inactiveFxColor;
-        }
-
-        if (toggleMusic)
-        {
-            inst.ToggleMusic();
-            imageMusicToggle.sprite = inst.MusicIsOn() ? activeMusicColor : inactiveMusicColor;
-        }
+        AudioManager inst = AudioManager.instance;
+        inst.ToggleFx();
+        imageFxToggle.sprite = inst.FxIsOn() ? activeFxColor : inactiveFxColor;
+    }
+    public void ToggleMusic()
+    {
+        AudioManager inst = AudioManager.instance;
+        inst.ToggleMusic();
+        imageMusicToggle.sprite = inst.MusicIsOn() ? activeMusicColor : inactiveMusicColor;
     }
 
 }
