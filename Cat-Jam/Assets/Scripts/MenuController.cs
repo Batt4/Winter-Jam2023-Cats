@@ -33,7 +33,7 @@ public class MenuController : MonoBehaviour
         AudioManager.instance.ChangeFxVolume(fxSlider.value);
         musicSlider.onValueChanged.AddListener(val => AudioManager.instance.ChangeMusicVolume(val));
         fxSlider.onValueChanged.AddListener(val => AudioManager.instance.ChangeFxVolume(val));
-
+        AudioManager.instance.changeMusic(AudioManager.instance.musicaMenu);
     }
 
     public void play()
