@@ -15,6 +15,8 @@ public class GameController : MonoBehaviour
     public GameObject panelWin;
     public GameObject panelLose;
 
+    
+
     [Header("Pause")]
     private bool isPaused = false;
     public KeyCode pauseKey1 = KeyCode.Escape;
@@ -34,6 +36,8 @@ public class GameController : MonoBehaviour
     void Start()
     {
         timer = startingTimer;
+        sliderTimer.maxValue = startingTimer;
+        updateTimer(startingTimer);
         gameover = false;
         if (numberOfSpawns > coinsSpawns.Count)
             numberOfSpawns = coinsSpawns.Count;
@@ -42,7 +46,6 @@ public class GameController : MonoBehaviour
         while (selectedIndexes.Count < numberOfSpawns)
         {
             int randomIndex = Random.Range(0, coinsSpawns.Count-1);
-            Debug.Log(randomIndex);
             if (!selectedIndexes.Contains(randomIndex))
             {
                 selectedIndexes.Add(randomIndex);
@@ -50,9 +53,7 @@ public class GameController : MonoBehaviour
         }
         Debug.Log("count: " + selectedIndexes.Count);
         for (int index = 0; index <= selectedIndexes.Count-1; index++)
-        //foreach (int index in selectedIndexes)
         {
-            Debug.Log("index: " + index);
             GameObject inst = Instantiate(coinPrefab, coinsSpawns[selectedIndexes[index]].position, Quaternion.identity);
             coins.Add(inst);
         }
@@ -68,6 +69,7 @@ public class GameController : MonoBehaviour
         }
 
         timer -= Time.deltaTime;
+        updateTimer(timer); ;
 
         if (timer <= 0)
         {
@@ -76,8 +78,15 @@ public class GameController : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
             panelLose.SetActive(true);
+            StopAllCoroutines();
         }
 
+    }
+
+    private void updateTimer(float t)
+    {
+        //float normalizedTime = t / sliderTimer.maxValue;
+        sliderTimer.value = t;
     }
 
     private void TogglePause()
@@ -122,11 +131,12 @@ public class GameController : MonoBehaviour
     }
     public void playNextBtn()
     {
-        Debug.Log("play next btn");
+        Debug.Log("play next btn");/*
         int gameScenesIndex = gameScenes.IndexOf(SceneManager.GetActiveScene().ToString());
         gameScenesIndex++;
         if (gameScenesIndex > gameScenes.Count - 1)
             gameScenesIndex = 0;
-        SceneManager.LoadScene(gameScenes[gameScenesIndex]);
+        SceneManager.LoadScene(gameScenes[gameScenesIndex]);*/
+        SceneManager.LoadScene("Game");
     }
 }

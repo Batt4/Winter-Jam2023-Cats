@@ -15,8 +15,8 @@ public class AudioManager : MonoBehaviour
 
 
     [Header("SFX")]
-    [SerializeField] private AudioClip btnClick;
-    [SerializeField] private AudioClip playBtn;
+    [SerializeField] public AudioClip btnClick;
+    [SerializeField] public AudioClip playBtn, meow;
 
     private void Awake()
     {
