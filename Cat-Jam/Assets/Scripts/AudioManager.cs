@@ -5,8 +5,18 @@ using UnityEngine;
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager instance;
+    public GameObject fxPrefab;
 
-    [SerializeField] private AudioSource musicSource, fxSource;
+    [SerializeField] private AudioSource musicSource;
+    private List<AudioSource> fxList = new List<AudioSource>();
+
+    [Header("Music")]
+    [SerializeField] private AudioClip music;
+
+
+    [Header("SFX")]
+    [SerializeField] private AudioClip btnClick;
+    [SerializeField] private AudioClip playBtn;
 
     private void Awake()
     {
@@ -20,10 +30,20 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void playSound(AudioClip clip)
+    public void playFxSound(AudioClip clip)
     {
-        fxSource.PlayOneShot(clip);
+        GameObject fxp = Instantiate(fxPrefab);
+        fxp.transform.parent = gameObject.transform;
+        AudioSource audioSource = fxp.GetComponent<AudioSource>();
+        fxList.Add(audioSource);
+
+        if (audioSource != null)
+        {
+            audioSource.PlayOneShot(clip);
+            StartCoroutine(RemoveAudioSource(audioSource));
+        }
     }
+
 
     public void ChangeMusicVolume(float value)
     {
@@ -32,12 +52,14 @@ public class AudioManager : MonoBehaviour
 
     public void ChangeFxVolume(float value)
     {
-        fxSource.volume = value;
+        foreach(AudioSource audioSource in fxList)
+            audioSource.volume = value;
     }
 
     public void ToggleFx()
     {
-        fxSource.mute = !fxSource.mute;
+        foreach (AudioSource audioSource in fxList)
+            audioSource.mute = !audioSource.mute;
     }
 
     public void ToggleMusic()
@@ -47,10 +69,23 @@ public class AudioManager : MonoBehaviour
 
     public bool FxIsOn()
     {
-        return !fxSource.mute;
+        foreach (AudioSource audioSource in fxList)
+            if (audioSource.mute)
+                return true;
+        return false;
+
     }
     public bool MusicIsOn()
     {
         return !musicSource.mute;
     }
+
+    IEnumerator RemoveAudioSource(AudioSource audioSource)
+    {
+        yield return new WaitForSeconds(audioSource.clip.length);
+        fxList.Remove(audioSource);
+        Destroy(audioSource.gameObject);
+    }
+
+
 }
